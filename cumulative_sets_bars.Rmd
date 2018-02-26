@@ -9,7 +9,7 @@ library(dplyr)
 library(ggplot2)
 ```
 
-## Basix example
+## Basic case
 
 Create data frame with two columns for set IDs and elements:
 
@@ -44,5 +44,21 @@ ggplot(df.cc.max,aes(x=id,fill=id)) +
   theme_bw() + theme(legend.position="none",axis.ticks=element_blank(),panel.grid.minor.y=element_blank()) +
   xlab("") +
   scale_y_continuous("# elements in each set (bars) and cumulative set union (points)",breaks=seq(0,6,1),labels=(seq(0,6,1)))
+```
+
+## Subsets
+Assign probability to each element:
+```{r}
+element <- c("A","B","C","A","A","D","E","F")
+prob <- c(0.3, 0.8 , 1.0, 0.9, 0.7, 1.0, 0.2, 0.8)
+id <- c("Set1", "Set1", "Set1", "Set3", "Set2", "Set3","Set3","Set4")
+df <- data.frame(id, prob, element)
+df
+```
+Only count elements with `prob > 0.5`:
+
+```{r}
+df.cc <- mutate(subset(df[order(df$id),],prob>0.5),cc=cumsum(!duplicated(unlist(element))))
+df.cc
 ```
 
