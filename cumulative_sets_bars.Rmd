@@ -1,0 +1,48 @@
+# Cumulative count of set union
+
+Create [cumulative_sets_bars.md](cumulative_sets_bars.md): `R -e 'library(knitr); knit("cumulative_sets_bars.Rmd")'`
+
+Required libraries:
+```{r message=FALSE}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+```
+
+## Basix example
+
+Create data frame with two columns for set IDs and elements:
+
+```{r}
+element <- c("A","B","C","A","A","D","E","F")
+id <- c("Set1", "Set1", "Set1", "Set3", "Set2", "Set3","Set3","Set4")
+df <- data.frame(id, element)
+df
+```
+
+Order by set id and increase counter for each additional element to generate a cumulative count of unique elements:
+
+```{r}
+df.cc <- mutate(df[order(df$id),],cc=cumsum(!duplicated(unlist(element))))
+df.cc
+```
+
+Now, collapse the data frame by `id` and assign highest value of `cc` to the new column `ccmax`.
+Additionally, add a count for the number of elements in each set and a string with all element names.
+
+```{r}
+df.cc.max <- ddply(df.cc, .(id), summarise, n_elements=length(element), ccmax=max(cc), elements=paste(element,collapse=" "))
+df.cc.max
+```
+
+Plot bar chart with set sizes and cumulative sum of set union size (`ccmax`):
+```{r cumulative_sets_bars}
+ggplot(df.cc.max,aes(x=id,fill=id)) +
+  geom_bar(aes(y=n_elements),stat="identity") +
+  geom_point(aes(y=ccmax, fill=id),shape=16,size=5) +
+  geom_text(y=0.1,aes(label=elements)) +
+  theme_bw() + theme(legend.position="none",axis.ticks=element_blank(),panel.grid.minor.y=element_blank()) +
+  xlab("") +
+  scale_y_continuous("# elements in each set (bars) and cumulative set union (points)",breaks=seq(0,6,1),labels=(seq(0,6,1)))
+```
+
