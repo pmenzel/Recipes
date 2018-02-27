@@ -12,18 +12,18 @@ library(ggplot2)
 Create data frame with columns for age group, gender, and count:
 ```{r}
 set.seed(100)
-df <- data.frame(count=sample(1:20,20), gender=c(rep('M',10),rep('F',10)), group=factor(rep(1:10,2)))
+df <- data.frame(count=sample(1:20,40,replace=TRUE), gender=c(rep('M',20),rep('F',20)), age=factor(rep(1:20,2)))
 df
 ```
 
 The trick for making bi-directional bars is to convert the counts of one gender to negative values and change the axis labels to postive values on both sides:
 ```{r population_pyramid_bars}
-ggplot(data=df,aes(x=group, fill=gender)) +
+ggplot(data=df,aes(x=age, fill=gender)) +
   geom_bar(data=subset(df,gender=='M'),aes(y=count),stat="identity") +
   geom_bar(data=subset(df,gender=='F'),aes(y=-1*count),stat="identity") +
   coord_flip() +
   theme_bw() +
-  theme(legend.position="none") +
+  theme(legend.position="bottom") +
   scale_y_continuous(limits=c(-20,20),breaks=seq(-20,20,5),labels=abs(seq(-20,20,5)))
 ```
 
