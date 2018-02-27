@@ -1,0 +1,31 @@
+#test Cumulative count of set union
+
+Create [population_pyramid_bars.md](population_pyramid_bars.md): `R -e 'library(knitr); knit("population_pyramid_bars.Rmd")'`
+
+Required libraries:
+```{r message=FALSE}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+```
+
+## Basic case
+
+Create data frame with columns for age group, gender, and count:
+```{r}
+set.seed(100)
+df <- data.frame(count=sample(1:20,20), gender=c(rep('M',10),rep('F',10)), group=factor(rep(1:10,2)))
+df
+```
+
+The trick for making bi-directional bars is to convert the counts of one gender to negative values and change the axis labels to postive values on both sides:
+```{r population_pyramid_bars}
+ggplot(data=df,aes(x=group, fill=gender)) +
+  geom_bar(data=subset(df,gender=='M'),aes(y=count),stat="identity") +
+  geom_bar(data=subset(df,gender=='F'),aes(y=-1*count),stat="identity") +
+  coord_flip() +
+  theme_bw() +
+  theme(legend.position="none") +
+  scale_y_continuous(limits=c(-20,20),breaks=seq(-20,20,5),labels=abs(seq(-20,20,5)))
+```
+
