@@ -1,12 +1,10 @@
-#test Cumulative count of set union
+# Population pyramid with bi-directional bars
 
 Create [population_pyramid_bars.md](population_pyramid_bars.md): `R -e 'library(knitr); knit("population_pyramid_bars.Rmd")'`
 
 Required libraries:
 
 ```r
-library(plyr)
-library(dplyr)
 library(ggplot2)
 ```
 
