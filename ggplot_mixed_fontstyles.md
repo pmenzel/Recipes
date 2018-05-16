@@ -2,14 +2,14 @@
 
 Create [ggplot_mixed_fontstyles.md](ggplot_mixed_fontstyles.md): `R -e 'library(knitr); knit("ggplot_mixed_fontstyles.Rmd")'`
 
+This recipe shows a simple example for having some point labels in bold font in a scatter plot.
+
 Required libraries:
 
 ```r
 library(ggplot2)
 library(ggrepel)
 ```
-
-## Basic case
 
 Create data frame:
 
@@ -28,10 +28,10 @@ df
 ## 3  fgh 2.5 2.5
 ```
 
-Add column for fonttype using a y-value cutoff:
+Add column for font face using a y-value cutoff:
 
 ```r
-df$fonttype <- ifelse(y > 2.0, "bold", "plain")
+df$fontface <- ifelse(y > 2.0, "bold", "plain")
 df$abovethreshold <- ifelse(y > 2.0, TRUE, FALSE)
 ```
 
@@ -39,10 +39,10 @@ df$abovethreshold <- ifelse(y > 2.0, TRUE, FALSE)
 ```r
 ggplot(df,aes(x=x, y=y)) +
   geom_point(aes(shape=abovethreshold,size=abovethreshold,color=abovethreshold)) +
-  geom_text_repel(aes(label=name,fontface=fonttype)) +
+  geom_text_repel(aes(label=name,fontface=fontface)) +
   theme_bw() +
   scale_shape_manual(guide=F,values=c(16,42)) +
-  scale_size_manual(guide=F,values=c(3,8)) +
+  scale_size_manual(guide=F,values=c(3,10)) +
   scale_color_discrete(guide=F)+
   xlab("") +
   ylab("") +
