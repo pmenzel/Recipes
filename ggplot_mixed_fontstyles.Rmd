@@ -1,4 +1,4 @@
-# Cumulative count of set union
+# Mixed point label font styles
 
 Create [ggplot_mixed_fontstyles.md](ggplot_mixed_fontstyles.md): `R -e 'library(knitr); knit("ggplot_mixed_fontstyles.Rmd")'`
 
