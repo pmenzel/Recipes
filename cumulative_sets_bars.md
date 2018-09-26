@@ -5,9 +5,7 @@ Create [cumulative_sets_bars.md](cumulative_sets_bars.md): `R -e 'library(knitr)
 Required libraries:
 
 ```r
-library(plyr)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 ```
 
 ## Basic case
@@ -38,7 +36,7 @@ Order by set id and increase counter for each additional element to generate a c
 
 
 ```r
-df.cc <- mutate(df[order(df$id),],cc=cumsum(!duplicated(unlist(element))))
+df.cc <- df %>% arrange(id) %>% mutate(cc = cumsum(!duplicated(element)))
 df.cc
 ```
 
@@ -59,17 +57,33 @@ Additionally, add a count for the number of elements in each set and a string wi
 
 
 ```r
-df.cc.max <- ddply(df.cc, .(id), summarise, n_elements=length(element), ccmax=max(cc), elements=paste(element,collapse=" "))
+df.cc.max <- df.cc %>%
+  group_by(id) %>%
+  summarise(ccmax = max(cc), n_elements=length(element), elements=paste(element,collapse=" "))
 df.cc.max
 ```
 
 ```
-##     id n_elements ccmax elements
-## 1 Set1          3     3    A B C
-## 2 Set2          1     3        A
-## 3 Set3          3     5    A D E
-## 4 Set4          1     6        F
+## # A tibble: 4 x 4
+##   id    ccmax n_elements elements
+##   <fct> <dbl>      <int> <chr>   
+## 1 Set1      3          3 A B C   
+## 2 Set2      3          1 A       
+## 3 Set3      5          3 A D E   
+## 4 Set4      6          1 F
 ```
+
+Both steps combined into one:
+
+```r
+library(tidyverse)
+df.cc.max <- df %>% arrange(id) %>%
+  mutate(cc = cumsum(!duplicated(element))) %>%
+  group_by(id) %>%
+  summarise(ccmax = max(cc), n_elements=length(element), elements=paste(element,collapse=" "))
+```
+
+### Plot
 
 Plot bar chart with set sizes and cumulative sum of set union size (`ccmax`):
 
@@ -111,7 +125,7 @@ Only count elements with `prob > 0.5`:
 
 
 ```r
-df.cc <- mutate(subset(df[order(df$id),],prob>0.5),cc=cumsum(!duplicated(unlist(element))))
+df.cc <- df %>% arrange(id) %>% filter(prob>0.5) %>% mutate(cc=cumsum(!duplicated(unlist(element))))
 df.cc
 ```
 
